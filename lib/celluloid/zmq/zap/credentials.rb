@@ -10,13 +10,6 @@ module Celluloid
           include Celluloid::Logger
 
           def get(domain, address, identity, mechanism, *credentials)
-            resp = ''
-            resp << "domain:#{domain} "
-            resp << "address:#{address} "
-            resp << "identity:#{identity} "
-            resp << "mechanism:#{mechanism} "
-            resp << "credentials:#{credentials}"
-            debug resp
             'nobody'
           end
         end
@@ -31,13 +24,10 @@ module Celluloid
             case mechanism
             when 'NULL'
               null(domain, address, identity)
-
             when 'PLAIN'
-              plain(credentials[0], credentials[1])
-
+              plain(credentials.first, credentials.last)
             when 'CURVE'
-              curve(credentials[0])
-
+              curve(credentials.first)
             else
               fail ArgumentError, "Unknown mechanism #{mechanism}"
             end
@@ -54,13 +44,13 @@ module Celluloid
 
           def plain(username, password)
             @plain.select(:username)
-                   .where(username: credentials[0],
-                          password: credentials[1])
+                   .where(username: credentials.first,
+                          password: credentials.last)
           end
 
           def curve(public_key)
             @curve.select(:username)
-                    .where(public_key: public_key)
+                   .where(public_key: public_key)
           end
         end
 
@@ -74,13 +64,10 @@ module Celluloid
             case mechanism
             when 'NULL'
               null(domain, address, identity)
-
             when 'PLAIN'
-              plain(credentials[0], credentials[1])
-
+              plain(credentials.first, credentials.last)
             when 'CURVE'
-              curve(credentials[0])
-
+              curve(credentials.first)
             else
               fail ArgumentError, "Unknown mechanism #{mechanism}"
             end
@@ -89,7 +76,7 @@ module Celluloid
           private
 
           def null(domain, address, identity)
-            user = @redis.hgetall("null::#{identity}")
+            user = @redis.hgetall("zap::null::#{identity}")
             if user['domain'] == domain && user['address'] == address
               user['username']
             else
@@ -98,7 +85,7 @@ module Celluloid
           end
 
           def plain(username, password)
-            user = @redis.hgetall("plain::#{username}")
+            user = @redis.hgetall("zap::plain::#{username}")
             if user['password'] == password
               user['username']
             else
@@ -107,27 +94,11 @@ module Celluloid
           end
 
           def curve(identity, public_key)
-            user = @redis.hgetall("curve::#{identity}")
+            user = @redis.hgetall("zap::curve::#{identity}")
             if user['public_key'] == public_key
               user['username']
             else
               false
-            end
-          end
-
-          def get(domain, address, identity, mechanism, *credentials)
-            case mechanism
-            when 'NULL'
-              null(domain, address, identity)
-
-            when 'PLAIN'
-              plain(credentials[0], credentials[1])
-
-            when 'CURVE'
-              curve(identity, credentials[0])
-
-            else
-              fail ArgumentError, "Unknown mechanism #{mechanism}"
             end
           end
         end

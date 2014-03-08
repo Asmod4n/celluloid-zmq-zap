@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gemspec
+
 group :development do
   gem 'pry'
   gem 'rbnacl'
@@ -9,4 +11,3 @@ group :development do
   gem 'sequel'
 end
 
-gemspec

@@ -14,7 +14,6 @@ module Celluloid
           @authenticator = options.fetch(:authenticator, Credentials::Null).new
 
           @socket = RouterSocket.new
-          @socket.identity = options.fetch(:identity, 'zeromq.zap.01')
 
           begin
             @socket.bind('inproc://zeromq.zap.01')
@@ -30,7 +29,7 @@ module Celluloid
           loop { async.handle_messages @socket.read_multipart }
         end
 
-        def handle_messages(messages)
+        def handle_messages(messages) # rubocop:disable MethodLength
           dlm = messages.index('')
           servers, payload = messages[0, dlm], messages[dlm + 1..-1]
           if payload.size.between?(6, 9)
