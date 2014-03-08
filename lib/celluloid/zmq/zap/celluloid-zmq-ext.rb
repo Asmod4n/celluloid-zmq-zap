@@ -1,3 +1,4 @@
+# rubocop:disable all
 module Celluloid
   module ZMQ
     def self.evented?
@@ -68,3 +69,4 @@ module Celluloid
     end
   end
 end
+# rubocop:enable all

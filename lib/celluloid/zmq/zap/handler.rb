@@ -1,8 +1,10 @@
 require 'celluloid/zmq'
+require 'celluloid/zmq/zap/credentials'
 
 module Celluloid
   module ZMQ
     module ZAP
+      # Handler
       class Handler
         include Celluloid::ZMQ
 
@@ -12,7 +14,6 @@ module Celluloid
           @authenticator = options.fetch(:authenticator, Credentials::Null).new
 
           @socket = RouterSocket.new
-          @socket.set(::ZMQ::ZAP_DOMAIN, options.fetch(:domain, 'test'))
           @socket.identity = options.fetch(:identity, 'zeromq.zap.01')
 
           begin
@@ -30,29 +31,36 @@ module Celluloid
         end
 
         def handle_messages(messages)
-          delimiter = messages.index('')
-          servers, payload = messages[0, delimiter], messages[delimiter+1..-1]
+          dlm = messages.index('')
+          servers, payload = messages[0, dlm], messages[dlm + 1..-1]
           if payload.size.between?(6, 9)
-            version, request_id, domain, address, identity, mechanism, credentials = payload
+
+            version, request_id, domain, address,
+            identity, mechanism, credentials = payload
+
             if version == '1.0'
-              if user = @authenticator.get(domain, address, identity, mechanism, credentials)
-                @socket << servers.concat(['', '1.0', request_id, '200', 'OK', user, ''])
+              user = @authenticator.get(domain, address, identity,
+                                        mechanism, credentials)
+
+              if user
+                @socket << servers.concat(['', '1.0', request_id, '200',
+                                           'OK', user, ''])
               else
-                @socket << servers.concat(['', '1.0', request_id, '400', 'Identity is not known', '', ''])
+                @socket << servers.concat(['', '1.0', request_id, '400',
+                                           'Identity is not known', '', ''])
               end
             else
-              @socket << servers.concat(['', '1.0', request_id, '500', 'Version number not valid', '', ''])
+              @socket << servers.concat(['', '1.0', request_id, '500',
+                                         'Version number not valid', '', ''])
             end
           else
-            @socket << servers.concat(['', '1.0', '1', '500', 'Payload size not valid', '', ''])
+            @socket << servers.concat(['', '1.0', '1', '500',
+                                       'Payload size not valid', '', ''])
           end
         end
 
-        def finalizer
-          if @socket
-            @socket.close
-            @socket = nil
-          end
+        def finalize
+          @socket.close if @socket
         end
 
         def terminate
