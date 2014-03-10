@@ -4,7 +4,7 @@ module Celluloid
       # Authenticators
       module Authenticators
         class AbstractAuthenticator
-          def get(domain, address, identity, mechanism, *credentials)
+          def get(domain, address, identity, mechanism, credentials)
             case mechanism
             when 'NULL'
               null(domain, address, identity)

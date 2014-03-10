@@ -50,7 +50,7 @@ module Celluloid
                                              'OK', user, ''])
                 else
                   @socket << servers.concat(['', '1.0', request_id, '400',
-                                             'Identity is not known', '', ''])
+                                             'Invalid credentials', '', ''])
                 end
               else
                 @socket << servers.concat(['', '1.0', request_id, '500',

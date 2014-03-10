@@ -11,7 +11,7 @@ module Celluloid
 
           def get(domain, address, identity, mechanism, *credentials)
             debug "domain:#{domain} address:#{address} identity:#{identity} mechanism:#{mechanism} credentials:#{credentials}"
-            'nobody'
+            'anonymous'
           end
         end
       end
