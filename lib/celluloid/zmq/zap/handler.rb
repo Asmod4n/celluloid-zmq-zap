@@ -1,5 +1,4 @@
 require 'celluloid/zmq'
-require 'celluloid/zmq/zap/credentials'
 
 module Celluloid
   module ZMQ
@@ -7,11 +6,15 @@ module Celluloid
       # Handler
       class Handler
         include Celluloid::ZMQ
+        include Celluloid::Logger
 
         finalizer :finalize
 
         def initialize(options = {})
-          @authenticator = options.fetch(:authenticator, Credentials::Null).new
+          @authenticator = options.fetch(:authenticator) do
+            require 'celluloid/zmq/zap/authenticators/null'
+            Authenticators::Null.new
+          end
 
           @socket = RouterSocket.new
 
@@ -29,32 +32,36 @@ module Celluloid
           loop { async.handle_messages @socket.read_multipart }
         end
 
-        def handle_messages(messages) # rubocop:disable MethodLength
-          dlm = messages.index('')
-          servers, payload = messages[0, dlm], messages[dlm + 1..-1]
-          if payload.size.between?(6, 9)
+        def handle_messages(messages)
+          delimiter = messages.index('')
+          if delimiter
+            servers, payload = messages[0, delimiter], messages[delimiter + 1..-1]
+            if payload.size.between?(6, 9)
 
-            version, request_id, domain, address,
-            identity, mechanism, credentials = payload
+              version, request_id, domain, address,
+              identity, mechanism, credentials = payload
 
-            if version == '1.0'
-              user = @authenticator.get(domain, address, identity,
-                                        mechanism, credentials)
+              if version == '1.0'
+                user = @authenticator.get(domain, address, identity,
+                                          mechanism, credentials)
 
-              if user
-                @socket << servers.concat(['', '1.0', request_id, '200',
-                                           'OK', user, ''])
+                if user
+                  @socket << servers.concat(['', '1.0', request_id, '200',
+                                             'OK', user, ''])
+                else
+                  @socket << servers.concat(['', '1.0', request_id, '400',
+                                             'Identity is not known', '', ''])
+                end
               else
-                @socket << servers.concat(['', '1.0', request_id, '400',
-                                           'Identity is not known', '', ''])
+                @socket << servers.concat(['', '1.0', request_id, '500',
+                                           'Version number not valid', '', ''])
               end
             else
-              @socket << servers.concat(['', '1.0', request_id, '500',
-                                         'Version number not valid', '', ''])
+              @socket << servers.concat(['', '1.0', '1', '500',
+                                         'Payload size not valid', '', ''])
             end
           else
-            @socket << servers.concat(['', '1.0', '1', '500',
-                                       'Payload size not valid', '', ''])
+            abort ArgumentError.new("Invalid message #{messages} recieved")
           end
         end
 
