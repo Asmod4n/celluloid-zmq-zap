@@ -13,7 +13,10 @@ Gem::Specification.new do |gem|
     'lib/celluloid/zmq/zap.rb',
     'lib/celluloid/zmq/zap/version.rb',
     'lib/celluloid/zmq/zap/celluloid-zmq-ext.rb',
-    'lib/celluloid/zmq/zap/credentials.rb',
+    'lib/celluloid/zmq/zap/authenticators.rb',
+    'lib/celluloid/zmq/zap/authenticators/null.rb',
+    'lib/celluloid/zmq/zap/authenticators/redis.rb',
+    'lib/celluloid/zmq/zap/authenticators/sequel.rb',
     'lib/celluloid/zmq/zap/handler.rb',
     'LICENSE',
     'README.md'
