@@ -2,8 +2,7 @@ $LOAD_PATH.unshift(File.expand_path('../lib', __FILE__)) unless $LOAD_PATH.inclu
 require 'celluloid/zmq/zap/version'
 
 Gem::Specification.new do |gem|
-  gem.authors       = %w[Hendrik Beskow]
-  gem.email         = %w[hendrik@beskow.de]
+  gem.authors       = 'Hendrik Beskow'
   gem.description   = 'ZeroMQ Authentication Protocol in Ruby'
   gem.summary       = 'ØMQ zap handler'
   gem.homepage      = 'https://github.com/Asmod4n/celluloid-zmq-zap'
