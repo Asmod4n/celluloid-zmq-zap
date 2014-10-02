@@ -39,7 +39,7 @@ module Celluloid
             if payload.size.between?(6, 9)
 
               version, request_id, domain, address,
-              identity, mechanism, credentials = payload
+              identity, mechanism, *credentials = payload
 
               if version == '1.0'
                 user = @authenticator.get(domain, address, identity,
