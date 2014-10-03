@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift(File.expand_path('../lib', __FILE__)) unless $LOAD_PATH.include?(File.expand_path('../lib', __FILE__))
+$LOAD_PATH.unshift(File.expand_path('../lib', __FILE__))
 require 'celluloid/zmq/zap/version'
 
 Gem::Specification.new do |gem|
@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.description   = 'ZeroMQ Authentication Protocol in Ruby'
   gem.summary       = 'ØMQ zap handler'
   gem.homepage      = 'https://github.com/Asmod4n/celluloid-zmq-zap'
-  gem.license       = 'Apache 2.0'
+  gem.license       = 'Apache-2.0'
 
   gem.files         = [
     'lib/celluloid/zmq/zap.rb',
@@ -22,11 +22,10 @@ Gem::Specification.new do |gem|
   ]
 
   gem.name          = 'celluloid-zmq-zap'
-  gem.require_paths = %w[lib]
   gem.version       = Celluloid::ZMQ::ZAP::VERSION
 
-  gem.add_dependency 'celluloid-zmq', '>= 0.15'
-  gem.add_development_dependency 'bundler', '>= 1.5'
+  gem.add_dependency 'celluloid-zmq', '>= 0.16'
+  gem.add_development_dependency 'bundler', '>= 1.7'
   gem.signing_key = File.expand_path(File.join('~/.keys', 'gem-private_key.pem')) if $0 =~ /gem\z/
   gem.cert_chain = ['gem-public_cert.pem']
 end

@@ -1,9 +1,11 @@
-# run with ruby examples/curve_redis.rb
+﻿# run with ruby examples/curve_redis.rb
 
 require 'bundler/setup'
 require 'rbnacl'
 require 'celluloid/zmq/zap'
 require 'celluloid/zmq/zap/authenticators/redis'
+
+Celluloid::ZMQ.init
 
 $server_private_key = RbNaCl::PrivateKey.generate
 $server_public_key  = $server_private_key.public_key

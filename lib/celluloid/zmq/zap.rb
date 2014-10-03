@@ -1,4 +1,4 @@
-require 'celluloid/zmq'
+﻿require 'celluloid/zmq'
 
 module Celluloid
   module ZMQ
@@ -9,7 +9,7 @@ module Celluloid
 end
 
 require 'celluloid/zmq/zap/version'
-if Celluloid::ZMQ::VERSION == '0.15.0'
+if Celluloid::ZMQ::VERSION == '0.16.0'
   require 'celluloid/zmq/zap/celluloid-zmq-ext'
 end
 require 'celluloid/zmq/zap/authenticators'
