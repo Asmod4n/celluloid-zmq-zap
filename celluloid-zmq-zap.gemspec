@@ -26,6 +26,4 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'celluloid-zmq', '>= 0.16'
   gem.add_development_dependency 'bundler', '>= 1.7'
-  gem.signing_key = File.expand_path(File.join('~/.keys', 'gem-private_key.pem')) if $0 =~ /gem\z/
-  gem.cert_chain = ['gem-public_cert.pem']
 end
